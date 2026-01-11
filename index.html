@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Camino al Éxito - Oficial</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&display=swap');
+        :root { --gold: #f1c40f; --health: #ff4757; --happy: #ffa502; }
+        body { 
+            font-family: 'Outfit', sans-serif; 
+            background-color: #0f172a; 
+            color: white; 
+            overflow: hidden; 
+            height: 100vh; 
+            transition: background 0.6s ease; 
+            user-select: none; 
+            touch-action: manipulation; 
+        }
+        
+        .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass-dark { background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(20px); border-right: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 5px 0 15px rgba(0,0,0,0.5); }
+        .btn-gold { background: linear-gradient(to right, #d4af37, #f1c40f); color: #1e1b4b; box-shadow: 0 4px 15px rgba(241, 196, 15, 0.3); }
+        
+        input[type=range] { -webkit-appearance: none; background: rgba(255,255,255,0.1); border-radius: 10px; height: 6px; width: 100%; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: white; border: 2px solid var(--gold); box-shadow: 0 0 5px rgba(0,0,0,0.5); }
+        
+        .modal-active { display: flex !important; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        
+        .custom-scroll { overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(255,255,255,0.3) transparent; }
+        
+        @keyframes pulse-token { 0%, 100% { transform: scale(1); filter: brightness(1.2); } 50% { transform: scale(1.1); filter: brightness(1.5); } }
+        
+        @keyframes bounceIn { 0%{transform: translateX(-50%) scale(0.5); opacity:0} 80%{transform: translateX(-50%) scale(1.1)} 100%{transform: translateX(-50%) scale(1)} }
+        
+        .firework { position: absolute; width: 5px; height: 5px; border-radius: 50%; box-shadow: 0 0 10px #fff; animation: explode 1s ease-out infinite; }
+        @keyframes explode { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(30); opacity: 0; } }
+
+        @keyframes spin-die-y {
+            from { transform: rotateY(0deg); }
+            to { transform: rotateY(1080deg); }
+        }
+        .animate-spin-die {
+            animation: spin-die-y 1s ease-out;
+        }
+        .die-container {
+            perspective: 1000px;
+        }
+
+        /* ESTILO CASILLAS ACTUALIZADO */
+        .tile-v { 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            background: rgba(255,255,255,0.08); 
+            border-radius: 6px; border: 1px solid rgba(255,255,255,0.1); 
+            text-align: center; overflow: hidden;
+            transition: all 0.2s;
+            padding: 2px;
+        }
+        .tile-name { font-size: 6px; font-weight: 900; line-height: 1.1; color: rgba(255,255,255,0.7); word-break: break-word; }
+        .tile-icon { font-size: 18px; line-height: 1; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5)); margin-bottom: 3px; }
+        
+        /* Esquinas */
+        .tile-corner { background: rgba(255,255,255,0.15) !important; border: 1px solid rgba(255,255,255,0.4); z-index: 5; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
+        .tile-corner .tile-name { font-size: 7px; color: white; }
+        .tile-corner .tile-icon { font-size: 22px; }
+
+        /* Rutas Interiores */
+        .tile-inner {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            border-radius: 50%;
+            width: 65%;
+            height: 65%;
+            margin: auto;
+        }
+        .tile-inner-start { border-color: #4ade80 !important; color: #4ade80 !important; }
+        .tile-inner-end { border-color: #f87171 !important; color: #f87171 !important; }
+
+        .tile-highlight { 
+            transform: scale(1.15); z-index: 20; 
+            box-shadow: 0 0 20px currentColor; 
+            border: 2px solid currentColor !important; 
+            background-color: rgba(15, 23, 42, 0.95) !important;
+        }
+        .tile-highlight .tile-name { color: white; }
+
+        .p-token {
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 255, 255, 0.9);
+            position: absolute;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 30;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        .p-token.active {
+            width: 28px; height: 28px;
+            z-index: 50;
+            border: 3px solid white;
+            box-shadow: 0 0 25px currentColor;
+            animation: pulse-token 1.5s infinite;
+            font-size: 16px;
+        }
+        .p-token-icon {
+            transform: translateY(-1px);
+            filter: drop-shadow(0 1px 1px rgba(0,0,0,0.5));
+        }
+    </style>
+<script type="importmap">
+{
+  "imports": {
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3"
+  }
+}
+</script>
+</head>
+<body>
+    <div id="root"></div>
+    <script src="index.tsx" type="module"></script>
+</body>
+</html>
