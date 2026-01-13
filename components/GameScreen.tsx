@@ -35,16 +35,10 @@ const GameScreen: React.FC<GameScreenProps> = ({ state, dispatch }) => {
             {passiveIncomeBanner?.visible && (
                 <PassiveIncomeBanner
                     amount={passiveIncomeBanner.amount}
+                    // FIX: Corrected typo from passiveIncomebanner to passiveIncomeBanner.
                     playerName={passiveIncomeBanner.playerName}
                 />
             )}
-             <button 
-                onClick={() => dispatch({ type: 'END_GAME_EARLY' })}
-                className="fixed bottom-6 left-6 z-50 bg-red-600 text-white font-black px-5 py-3 rounded-xl shadow-lg hover:bg-red-700 transition-colors text-base uppercase animate__animated animate__pulse animate__infinite"
-                style={{ animationDuration: '2s' }}
-            >
-                Finalizar Partida
-            </button>
             <div id="game-layout" className='flex h-screen w-screen overflow-hidden'>
                 <StatusSidebar players={players} currentPlayerIndex={currentPlayerIndex} />
 

@@ -68,6 +68,7 @@ const App: React.FC = () => {
                 <TurnOverlay 
                     player={players[currentPlayerIndex]} 
                     onStartTurn={() => dispatch({ type: 'START_TURN' })} 
+                    dispatch={dispatch}
                 />
             )}
             {renderModal()}
