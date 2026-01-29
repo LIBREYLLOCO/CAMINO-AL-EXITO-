@@ -1,7 +1,7 @@
-
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Player } from '../types';
 import { pColors, pIcons } from '../constants';
+import { playSound } from '../utils/soundManager';
 
 interface SetupScreenProps {
     playerIndex: number;
@@ -10,6 +10,14 @@ interface SetupScreenProps {
     existingNames: string[];
     usedColors: string[];
     usedIcons: string[];
+}
+
+function usePrevious<T>(value: T): T | undefined {
+  const ref = useRef<T | undefined>(undefined);
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
 }
 
 const SetupScreen: React.FC<SetupScreenProps> = ({ playerIndex, totalPlayers, onSave, existingNames, usedColors, usedIcons }) => {
@@ -23,6 +31,9 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ playerIndex, totalPlayers, on
     const [timePoints, setTimePoints] = useState(0);
     const [total, setTotal] = useState(0);
     const [isValid, setIsValid] = useState(false);
+    const [nameError, setNameError] = useState<string | null>(null);
+    
+    const prevNameError = usePrevious(nameError);
 
     const updateTotals = useCallback(() => {
         const ageNum = parseInt(age) || 0;
@@ -31,14 +42,43 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ playerIndex, totalPlayers, on
         const currentTotal = tPts + money + health + happy;
         setTotal(currentTotal);
 
-        const nameExists = existingNames.includes(name.toUpperCase());
-        const valid = currentTotal === 100 && health >= 10 && happy >= 10 && name.length > 1 && !nameExists && money <= 80;
+        const cleanName = name.trim().toUpperCase();
+        const currentInitials = cleanName.substring(0, 2);
+        
+        // Validation: Check for duplicate initials or duplicate full names
+        let nameValid = true;
+        let errorMsg = null;
+
+        if (cleanName.length < 2) {
+            nameValid = false;
+        } else {
+            const isDuplicate = existingNames.some(existing => {
+                const existingInitials = existing.trim().substring(0, 2).toUpperCase();
+                return existingInitials === currentInitials;
+            });
+
+            if (isDuplicate) {
+                nameValid = false;
+                errorMsg = "¡Iniciales repetidas! Usa otro nombre o apodo.";
+            }
+        }
+        
+        setNameError(errorMsg);
+
+        const valid = currentTotal === 100 && health >= 10 && happy >= 10 && nameValid && money <= 80;
         setIsValid(valid);
     }, [age, money, health, happy, name, existingNames]);
 
     useEffect(() => {
         updateTotals();
     }, [name, age, money, health, happy, updateTotals]);
+    
+    // Effect to play sound when name error appears
+    useEffect(() => {
+        if (nameError && !prevNameError) {
+            playSound('error', 0.4);
+        }
+    }, [nameError, prevNameError]);
     
     useEffect(() => {
         // Reset form for new player
@@ -47,6 +87,7 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ playerIndex, totalPlayers, on
         setMoney(0);
         setHealth(0);
         setHappy(0);
+        setNameError(null);
         
         // Find the next available color and icon
         const availableColor = pColors.find(c => !usedColors.includes(c));
@@ -75,13 +116,15 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ playerIndex, totalPlayers, on
 
     const handleSave = () => {
         if (!isValid) return;
+        playSound('uiClick', 0.4);
         onSave({
-            name: name.toUpperCase(),
+            name: name.trim().toUpperCase(),
             color: color,
             icon: icon,
             metas: { t: timePoints, d: money, s: health, h: happy },
             actual: { pos: 0, money: 5000, health: 0, happy: 0, passive: 5000 },
-            inRoute: false, rId: null, rSteps: 0, visitedRoutes: []
+            inRoute: false, rId: null, rSteps: 0, visitedRoutes: [],
+            laps: 0 // Initialize laps
         });
     };
     
@@ -97,8 +140,9 @@ const SetupScreen: React.FC<SetupScreenProps> = ({ playerIndex, totalPlayers, on
             <h2 className="text-3xl font-black mb-6 italic uppercase leading-none text-white">Tu Fórmula<br /><span className="text-yellow-400">Personal</span></h2>
             <div className="space-y-6 flex-grow">
                 <div>
-                    <label className="text-[10px] text-white/50 font-black uppercase mb-1 block">Nombre</label>
-                    <input value={name} onChange={e => setName(e.target.value)} type="text" maxLength={12} className="w-full bg-white/10 p-4 rounded-2xl border border-white/10 font-black uppercase text-white outline-none focus:border-yellow-500 transition text-xl" />
+                    <label className="text-[10px] text-white/50 font-black uppercase mb-1 block">Nombre (Se usarán las 2 primeras letras)</label>
+                    <input value={name} onChange={e => setName(e.target.value)} type="text" maxLength={12} className={`w-full bg-white/10 p-4 rounded-2xl border ${nameError ? 'border-red-500 animate-pulse' : 'border-white/10'} font-black uppercase text-white outline-none focus:border-yellow-500 transition text-xl`} />
+                    {nameError && <p className="text-red-400 text-[10px] font-bold mt-1 uppercase">{nameError}</p>}
                 </div>
                 <div>
                     <label className="text-[10px] text-white/50 font-black uppercase mb-1 block">Edad (Auto-Fórmula)</label>

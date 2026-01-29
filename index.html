@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -23,7 +22,8 @@
         
         .glass { background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.1); }
         .glass-dark { background: rgba(15, 23, 42, 0.98); backdrop-filter: blur(20px); border-right: 1px solid rgba(255, 255, 255, 0.15); box-shadow: 5px 0 15px rgba(0,0,0,0.5); }
-        .btn-gold { background: linear-gradient(to right, #d4af37, #f1c40f); color: #1e1b4b; box-shadow: 0 4px 15px rgba(241, 196, 15, 0.3); }
+        .btn-gold { background: linear-gradient(to bottom, #fcd34d, #d97706); color: #381e04; box-shadow: 0 4px 0px #b45309, 0 10px 15px rgba(0,0,0,0.4); border: 1px solid #fbbf24; text-shadow: 0 1px 0 rgba(255,255,255,0.4); }
+        .btn-gold:active { transform: translateY(4px); box-shadow: 0 0 0 #b45309, 0 5px 5px rgba(0,0,0,0.4); }
         
         input[type=range] { -webkit-appearance: none; background: rgba(255,255,255,0.1); border-radius: 10px; height: 6px; width: 100%; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: white; border: 2px solid var(--gold); box-shadow: 0 0 5px rgba(0,0,0,0.5); }
@@ -40,15 +40,25 @@
         .firework { position: absolute; width: 5px; height: 5px; border-radius: 50%; box-shadow: 0 0 10px #fff; animation: explode 1s ease-out infinite; }
         @keyframes explode { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(30); opacity: 0; } }
 
-        @keyframes spin-die-y {
-            from { transform: rotateY(0deg); }
-            to { transform: rotateY(1080deg); }
+        /* STAT CHANGE ANIMATION */
+        @keyframes flash-increase {
+            0% { background-color: rgba(74, 222, 128, 0); } /* green-400 */
+            50% { background-color: rgba(74, 222, 128, 0.4); }
+            100% { background-color: rgba(74, 222, 128, 0); }
         }
-        .animate-spin-die {
-            animation: spin-die-y 1s ease-out;
+        @keyframes flash-decrease {
+            0% { background-color: rgba(248, 113, 113, 0); } /* red-400 */
+            50% { background-color: rgba(248, 113, 113, 0.4); }
+            100% { background-color: rgba(248, 113, 113, 0); }
         }
-        .die-container {
-            perspective: 1000px;
+        .animate-flash-increase {
+            animation: flash-increase 1.5s ease-out;
+        }
+        .animate-flash-decrease {
+            animation: flash-decrease 1.5s ease-out;
+        }
+        .stat-bar-inner {
+            transition: width 1.5s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         /* ESTILO CASILLAS ACTUALIZADO */
@@ -59,29 +69,30 @@
             text-align: center; overflow: hidden;
             transition: all 0.2s;
             padding: 2px;
+            z-index: 2; /* Ensure tiles are above the gradient */
         }
         .tile-name { font-size: 6px; font-weight: 900; line-height: 1.1; color: rgba(255,255,255,0.7); word-break: break-word; }
-        .tile-icon { font-size: 18px; line-height: 1; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5)); margin-bottom: 3px; }
+        .tile-icon { font-size: 26px; line-height: 1; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.5)); margin-bottom: 2px; }
         
         /* Esquinas */
         .tile-corner { background: rgba(255,255,255,0.15) !important; border: 1px solid rgba(255,255,255,0.4); z-index: 5; box-shadow: 0 0 10px rgba(0,0,0,0.3); }
         .tile-corner .tile-name { font-size: 7px; color: white; }
-        .tile-corner .tile-icon { font-size: 22px; }
+        .tile-corner .tile-icon { font-size: 34px; }
 
         /* Rutas Interiores */
         .tile-inner {
             background: rgba(255, 255, 255, 0.1) !important;
             border: 1px solid rgba(255, 255, 255, 0.2) !important;
             border-radius: 50%;
-            width: 65%;
-            height: 65%;
-            margin: auto;
+            position: absolute;
+            transform: translate(-50%, -50%); /* Center the tile */
         }
         .tile-inner-start { border-color: #4ade80 !important; color: #4ade80 !important; }
         .tile-inner-end { border-color: #f87171 !important; color: #f87171 !important; }
 
         .tile-highlight { 
-            transform: scale(1.15); z-index: 20; 
+            transform: scale(1.15) translate(-43%, -43%);
+            z-index: 20; 
             box-shadow: 0 0 20px currentColor; 
             border: 2px solid currentColor !important; 
             background-color: rgba(15, 23, 42, 0.95) !important;
@@ -94,7 +105,7 @@
             border: 2px solid rgba(255, 255, 255, 0.9);
             position: absolute;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: top 0.3s ease-in-out, left 0.3s ease-in-out, width 0.3s ease-in-out, height 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
             z-index: 30;
             display: flex;
             align-items: center;
@@ -113,13 +124,136 @@
             transform: translateY(-1px);
             filter: drop-shadow(0 1px 1px rgba(0,0,0,0.5));
         }
+        
+        .board-center-gradient {
+            position: absolute;
+            inset: 1px;
+            z-index: 1;
+            background: radial-gradient(circle at center, rgba(76, 29, 149, 0.35) 0%, rgba(15, 23, 42, 0) 70%);
+            border-radius: 11px;
+        }
+        
+        /* -----------------------
+           REALISTIC 3D DICE
+           ----------------------- */
+        .die-perspective {
+            --die-size: 40px;
+            --die-bg: #f8fafc;
+            --die-shadow: #cbd5e1;
+            --pip-color: #1e293b;
+            --pip-size: 8px;
+            
+            width: var(--die-size);
+            height: var(--die-size);
+            perspective: 600px;
+            margin: auto;
+        }
+        
+        .die-perspective-lg {
+            --die-size: 64px;
+            --pip-size: 12px;
+        }
+
+        .die-cube {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        .die-cube.rolling {
+            animation: roll-die 0.2s linear infinite;
+        }
+
+        .die-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(145deg, #ffffff, #e6e6e6);
+            border-radius: 16%; /* Soft rounded corners */
+            box-shadow: inset 0 0 4px rgba(0,0,0,0.1), 0 2px 5px rgba(0,0,0,0.2);
+            display: grid;
+            grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+            padding: 10%;
+            backface-visibility: hidden;
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+
+        /* Pips (Dots) */
+        .pip {
+            display: block;
+            align-self: center;
+            justify-self: center;
+            width: var(--pip-size);
+            height: var(--pip-size);
+            background-color: var(--pip-color);
+            border-radius: 50%;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.5);
+        }
+
+        /* Transformations */
+        .face-1 { transform: rotateY(0deg) translateZ(calc(var(--die-size)/2)); }
+        .face-6 { transform: rotateY(180deg) translateZ(calc(var(--die-size)/2)); }
+        .face-2 { transform: rotateY(90deg) translateZ(calc(var(--die-size)/2)); }
+        .face-5 { transform: rotateY(-90deg) translateZ(calc(var(--die-size)/2)); }
+        .face-3 { transform: rotateX(90deg) translateZ(calc(var(--die-size)/2)); }
+        .face-4 { transform: rotateX(-90deg) translateZ(calc(var(--die-size)/2)); }
+
+        /* Rotations to show faces */
+        .die-cube.show-1 { transform: rotateX(0deg) rotateY(0deg); }
+        .die-cube.show-6 { transform: rotateX(180deg) rotateY(0deg); }
+        .die-cube.show-2 { transform: rotateX(0deg) rotateY(-90deg); }
+        .die-cube.show-5 { transform: rotateX(0deg) rotateY(90deg); }
+        .die-cube.show-3 { transform: rotateX(-90deg) rotateY(0deg); }
+        .die-cube.show-4 { transform: rotateX(90deg) rotateY(0deg); }
+
+        @keyframes roll-die {
+            0% { transform: rotateX(0) rotateY(0) rotateZ(0); }
+            100% { transform: rotateX(360deg) rotateY(720deg) rotateZ(360deg); }
+        }
+
+        /* ZOOM CONTROLS - REVISED */
+        .zoom-controls {
+            position: absolute;
+            bottom: 1rem;
+            right: 1rem;
+            z-index: 100;
+            display: flex;
+            gap: 4px;
+            background: rgba(15, 23, 42, 0.15);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.02);
+            padding: 4px;
+            border-radius: 999px; /* Pill shape */
+        }
+        .zoom-controls button {
+            background-color: transparent;
+            color: white;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            font-size: 18px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: none;
+        }
+        .zoom-controls button:hover {
+            background-color: rgba(241, 196, 15, 1);
+            color: #0f172a;
+        }
     </style>
 <script type="importmap">
 {
   "imports": {
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
     "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3"
+    "react": "https://esm.sh/react@^19.2.3",
+    "@google/genai": "https://esm.sh/@google/genai"
   }
 }
 </script>

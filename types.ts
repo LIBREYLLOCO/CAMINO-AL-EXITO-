@@ -1,4 +1,3 @@
-
 export interface Player {
     id: number;
     name: string;
@@ -21,11 +20,13 @@ export interface Player {
     rId: string | null;
     rSteps: number;
     visitedRoutes: string[];
+    laps: number; // Número de vueltas completadas
 }
 
 export interface Rewards {
     money?: number;
     health?: number;
+
     happy?: number;
     passive?: number;
     pozoReset?: boolean;
@@ -52,6 +53,7 @@ export interface Tile {
 }
 
 export enum GameStatus {
+    Intro,
     Start,
     Setup,
     Playing,
@@ -72,6 +74,9 @@ export interface ActiveModal {
     payload: any;
 }
 
+export type TurnPhase = 'IDLE' | 'ROLLING' | 'MOVING' | 'TILE_INFO' | 'TILE_ACTION' | 'STAT_UPDATE' | 'TURN_END';
+
+
 export interface GameState {
     gameStatus: GameStatus;
     totalPlayers: number;
@@ -88,6 +93,20 @@ export interface GameState {
     passiveIncomeBanner: {
         visible: boolean;
         amount: number;
+        healthGain: number; // Cantidad de salud ganada
         playerName: string;
+        lap: number; // Número de vuelta
     } | null;
+    isMoving: boolean;
+    moveDetails: {
+        startPos: number;
+        steps: number;
+    } | null;
+    isMovingInRoute: boolean;
+    routeMoveDetails: {
+        startStep: number;
+        steps: number;
+    } | null;
+    isShowingStatChanges: boolean;
+    turnPhase: TurnPhase;
 }

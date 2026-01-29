@@ -1,7 +1,7 @@
-
 import React, { useState } from 'react';
 import { Tile } from '../../types';
 import AnimatedDie from '../AnimatedDie';
+import { playSound } from '../../utils/soundManager';
 
 interface HospitalModalProps {
     tile: Tile;
@@ -18,6 +18,7 @@ const HospitalModal: React.FC<HospitalModalProps> = ({ tile, onResolve }) => {
 
     const rollDie = () => {
         if (isRolling) return;
+        playSound('diceRoll', 0.7);
         setIsRolling(true);
 
         setTimeout(() => {
@@ -31,6 +32,7 @@ const HospitalModal: React.FC<HospitalModalProps> = ({ tile, onResolve }) => {
     };
 
     const handleConfirm = () => {
+        playSound('uiClick', 0.3);
         onResolve({
             cost,
             health: isHospital ? gain : 0,
@@ -47,7 +49,7 @@ const HospitalModal: React.FC<HospitalModalProps> = ({ tile, onResolve }) => {
     const buttonBg = isHospital ? 'bg-red-600' : 'bg-blue-600';
 
     return (
-        <div className={`fixed inset-0 flex items-center justify-center p-6 backdrop-blur-md modal-active ${isHospital ? 'bg-red-900/95' : 'bg-blue-900/95'}`}>
+        <div className={`fixed inset-0 flex items-center justify-center p-6 backdrop-blur-[2px] modal-active ${isHospital ? 'bg-red-900/50' : 'bg-blue-900/50'}`}>
             <div className={`glass w-full max-w-xs p-8 rounded-[2.5rem] text-center border-2 shadow-2xl ${borderColor}`}>
                 <h2 className="text-3xl font-black text-white uppercase italic mb-2">{title}</h2>
                 <p className="text-white/70 text-xs mb-6 font-bold">{description}</p>

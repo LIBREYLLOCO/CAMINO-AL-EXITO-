@@ -1,10 +1,10 @@
-
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState, useEffect, useReducer, useRef } from 'react';
 import { GameState, GameStatus, Player, ModalPayload } from './types';
 import StartScreen from './components/StartScreen';
 import SetupScreen from './components/SetupScreen';
 import GameScreen from './components/GameScreen';
 import WinScreen from './components/WinScreen';
+import IntroScreen from './components/IntroScreen';
 import TurnOverlay from './components/TurnOverlay';
 import InfoTileModal from './components/modals/InfoTileModal';
 import RouteModal from './components/modals/RouteModal';
@@ -13,10 +13,57 @@ import DiceEventModal from './components/modals/DiceEventModal';
 import HospitalModal from './components/modals/HospitalModal';
 import { gameReducer, initialState } from './state/gameReducer';
 import { mainBoard } from './constants';
+import { playSound } from './utils/soundManager';
+import SoundToggle from './components/SoundToggle';
+
+function usePrevious<T>(value: T): T | undefined {
+  const ref = useRef<T | undefined>(undefined);
+  useEffect(() => {
+    ref.current = value;
+  });
+  return ref.current;
+}
 
 const App: React.FC = () => {
     const [state, dispatch] = useReducer(gameReducer, initialState);
-    const { gameStatus, players, setupPlayerIndex, totalPlayers, currentPlayerIndex, activeModal, showTurnOverlay, winner } = state;
+    const { gameStatus, players, setupPlayerIndex, totalPlayers, currentPlayerIndex, activeModal, showTurnOverlay, winner, isShowingStatChanges, turnPhase } = state;
+    const prevGameStatus = usePrevious(gameStatus);
+    const prevActiveModal = usePrevious(activeModal);
+
+    // Sound effects for high-level state changes
+    useEffect(() => {
+        if (showTurnOverlay) {
+            playSound('turnStart', 0.4);
+        }
+    }, [showTurnOverlay]);
+
+    useEffect(() => {
+        if (activeModal?.type === 'CARD' && prevActiveModal?.type !== 'CARD') {
+            playSound('cardDraw', 0.6);
+        }
+    }, [activeModal, prevActiveModal]);
+
+    useEffect(() => {
+        if (gameStatus === GameStatus.Win && prevGameStatus !== GameStatus.Win) {
+            playSound('winGame', 0.7);
+        }
+    }, [gameStatus, prevGameStatus]);
+
+
+    useEffect(() => {
+        if (turnPhase === 'STAT_UPDATE') {
+            if (isShowingStatChanges) {
+                // Wait for animations to finish before advancing
+                const timer = setTimeout(() => {
+                    dispatch({ type: 'ADVANCE_TURN_PHASE' });
+                }, 1800);
+                return () => clearTimeout(timer);
+            } else {
+                // No animations, advance immediately
+                dispatch({ type: 'ADVANCE_TURN_PHASE' });
+            }
+        }
+    }, [turnPhase, isShowingStatChanges, dispatch]);
 
     const handleStartSetup = (playerCount: number) => {
         dispatch({ type: 'START_SETUP', payload: playerCount });
@@ -26,6 +73,11 @@ const App: React.FC = () => {
         dispatch({ type: 'SAVE_PLAYER', payload: player });
     };
 
+    const handleCloseModal = () => {
+        playSound('uiClick', 0.3);
+        dispatch({ type: 'ADVANCE_TURN_PHASE' });
+    }
+
     const renderModal = () => {
         if (!activeModal) return null;
 
@@ -34,7 +86,7 @@ const App: React.FC = () => {
 
         switch (activeModal.type) {
             case 'INFO_TILE':
-                return <InfoTileModal tile={activeModal.payload} onClose={() => dispatch({ type: 'SHOW_EVENT_CONTENT' })} />;
+                return <InfoTileModal tile={activeModal.payload} onClose={handleCloseModal} />;
             case 'ROUTE':
                 return <RouteModal tile={activeModal.payload} player={p} onDecision={(decision) => dispatch({ type: 'DECIDE_ROUTE', payload: decision })} />;
             case 'CARD':
@@ -50,6 +102,10 @@ const App: React.FC = () => {
     
     return (
         <>
+            {gameStatus !== GameStatus.Intro && gameStatus !== GameStatus.Start && gameStatus !== GameStatus.Setup && <SoundToggle />}
+            
+            {gameStatus === GameStatus.Intro && <IntroScreen onNext={() => dispatch({ type: 'SHOW_START_SCREEN' })} />}
+            
             {gameStatus === GameStatus.Start && <StartScreen onStart={handleStartSetup} />}
             {gameStatus === GameStatus.Setup && (
                 <SetupScreen

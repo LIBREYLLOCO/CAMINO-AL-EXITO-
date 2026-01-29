@@ -1,7 +1,7 @@
-
 import React, { useState } from 'react';
 import { Tile, Rewards } from '../../types';
 import AnimatedDie from '../AnimatedDie';
+import { playSound } from '../../utils/soundManager';
 
 interface DiceEventModalProps {
     tile: Tile;
@@ -17,6 +17,7 @@ const DiceEventModal: React.FC<DiceEventModalProps> = ({ tile, onResolve }) => {
 
     const rollEventDie = () => {
         if (isRolling) return;
+        playSound('diceRoll', 0.7);
         setIsRolling(true);
         setResultText("");
 
@@ -52,8 +53,13 @@ const DiceEventModal: React.FC<DiceEventModalProps> = ({ tile, onResolve }) => {
         }, 1000);
     };
 
+    const handleResolve = () => {
+        playSound('uiClick', 0.3);
+        onResolve(rewards);
+    };
+
     return (
-        <div className="fixed inset-0 z-[95] flex items-center justify-center p-6 bg-slate-900/95 backdrop-blur-md modal-active">
+        <div className="fixed inset-0 z-[95] flex items-center justify-center p-6 bg-slate-900/50 backdrop-blur-[2px] modal-active">
             <div className="glass w-full max-w-xs p-8 rounded-[2.5rem] text-center border-2 shadow-2xl">
                 <h2 className="text-2xl font-black text-white uppercase italic mb-2">{tile.n}</h2>
                 <p className="text-white/70 text-xs mb-6 font-bold">{tile.d}</p>
@@ -66,7 +72,7 @@ const DiceEventModal: React.FC<DiceEventModalProps> = ({ tile, onResolve }) => {
                         {isRolling ? '...' : 'TIRAR DADO'}
                     </button>
                 ) : (
-                    <button onClick={() => onResolve(rewards)} className="w-full py-4 bg-yellow-500 text-slate-900 rounded-2xl font-black text-sm uppercase shadow-lg">ACEPTAR</button>
+                    <button onClick={handleResolve} className="w-full py-4 bg-yellow-500 text-slate-900 rounded-2xl font-black text-sm uppercase shadow-lg">ACEPTAR</button>
                 )}
             </div>
         </div>

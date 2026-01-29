@@ -6,6 +6,65 @@ export const HOSPITAL_COST_MULTIPLIER = 500;
 export const pColors = ["#f1c40f", "#3b82f6", "#ef4444", "#22c55e", "#d946ef", "#06b6d4", "#ec4899", "#8b5cf6"];
 export const pIcons = ["🚀", "🦄", "🤖", "🍕", "👾", "🧙", "🕵️", "🎸", "🏆", "💎"];
 
+export const motivationalQuotes: { text: string; author: string; book: string; }[] = [
+    // Vive al Cien
+    { text: "¡Comienza hoy y vive tu vida al cien!", author: "JC", book: "Vive al Cien" },
+    { text: "Vivir la vida al máximo no es un destino, es un camino.", author: "JC", book: "Vive al Cien" },
+    { text: "El tiempo es limitado, no lo desperdicies viviendo la vida de otro.", author: "JC", book: "Vive al Cien" },
+    { text: "La vida es una colección de momentos vividos con intención y propósito.", author: "JC", book: "Vive al Cien" },
+    { text: "La verdadera paz es la capacidad de enfrentar los desafíos con valentía.", author: "JC", book: "Vive al Cien" },
+    { text: "La vida más plena es aquella que se vive con un toque de locura.", author: "JC", book: "Vive al Cien" },
+    { text: "Al otro lado del miedo se encuentra la libertad y la confianza.", author: "JC", book: "Vive al Cien" },
+    { text: "La aventura no solo está en el destino, sino en cada paso del camino.", author: "JC", book: "Vive al Cien" },
+    { text: "Cada aventura tiene el poder de transformar nuestra vida.", author: "JC", book: "Vive al Cien" },
+    { text: "La vida comienza al final de tu zona de confort.", author: "JC", book: "Vive al Cien" },
+    { text: "Cada final es simplemente el comienzo de algo nuevo.", author: "JC", book: "Vive al Cien" },
+    { text: "¿Qué huella quieres dejar en el mundo?", author: "JC", book: "Vive al Cien" },
+    { text: "La locura es la chispa que nos impulsa a soñar en grande.", author: "JC", book: "Vive al Cien" },
+    { text: "Construir un legado es vivir de manera que tus acciones resuenen más allá del tiempo.", author: "JC", book: "Vive al Cien" },
+    { text: "El verdadero éxito no está en los logros, sino en la huella positiva que dejamos.", author: "JC", book: "Vive al Cien" },
+    { text: "La verdadera libertad implica liberarnos de las cadenas invisibles que nos atan.", author: "JC", book: "Vive al Cien" },
+    { text: "Vivir con libertad es abrazar nuestras posibilidades con valentía y curiosidad.", author: "JC", book: "Vive al Cien" },
+    { text: "Un legado no es solo lo que logramos, sino cómo impactamos a quienes nos rodean.", author: "JC", book: "Vive al Cien" },
+    { text: "Cada acción cuenta, cada decisión importa.", author: "JC", book: "Vive al Cien" },
+    { text: "Liderar es como ser el faro en una tormenta: iluminar el camino y ofrecer esperanza.", author: "JC", book: "Vive al Cien" },
+    { text: "La vida no es una serie de pasos predecibles, sino una aventura vibrante.", author: "JC", book: "Vive al Cien" },
+    { text: "El verdadero descubrimiento está en los giros inesperados y en explorar lo desconocido.", author: "JC", book: "Vive al Cien" },
+    { text: "La verdadera transformación ocurre cuando aplicamos las ideas en nuestro día a día.", author: "JC", book: "Vive al Cien" },
+    { text: "Cada amanecer es una página en blanco, una nueva oportunidad para escribir tu historia.", author: "JC", book: "Vive al Cien" },
+
+    // AÚN
+    { text: "Hay palabras que actúan como anclas y otras que funcionan como alas.", author: "JC", book: "AÚN" },
+    { text: "El 'aún' es una grieta en el muro de lo imposible.", author: "JC", book: "AÚN" },
+    { text: "La semilla crece donde nadie la ve. En lo oscuro.", author: "JC", book: "AÚN" },
+    { text: "Los telones no caen, descansan. Un descanso no es un funeral. Es un 'aún'.", author: "JC", book: "AÚN" },
+    { text: "No estás obligado a triunfar. Estás invitado a ser fiel.", author: "JC", book: "AÚN" },
+    { text: "Ser fiel es aprender a decir 'aún' sin convertirlo en excusa.", author: "JC", book: "AÚN" },
+    { text: "La única manera de no ahogarse es convertirse en orilla de otro.", author: "JC", book: "AÚN" },
+    { text: "Una cicatriz no es una debilidad. Es la prueba de que sanaste.", author: "JC", book: "AÚN" },
+    { text: "Tu grieta no es tu vergüenza. Es tu historia. Es tu medalla.", author: "JC", book: "AÚN" },
+    { text: "Tu cuerpo no es una herramienta. Es tu compañero.", author: "JC", book: "AÚN" },
+    { text: "La ruina no es un destino. Es un pasaje.", author: "JC", book: "AÚN" },
+    { text: "El objetivo no es el puente, es cruzar al otro lado.", author: "JC", book: "AÚN" },
+    { text: "El 'aún' es la bisagra que abre la puerta del futuro.", author: "JC", book: "AÚN" },
+    { text: "El crecimiento más importante es invisible.", author: "JC", book: "AÚN" },
+    { text: "Tu trabajo no es presenciar la cosecha. Tu trabajo es ser fiel a la siembra.", author: "JC", book: "AÚN" },
+    { text: "Estar perdido es el prerrequisito para el verdadero descubrimiento.", author: "JC", book: "AÚN" },
+    { text: "Nadie ha descubierto un nuevo continente siguiendo un mapa viejo.", author: "JC", book: "AÚN" },
+    { text: "La palabra 'aún' es la brújula que emerge cuando el mapa se vuelve inútil.", author: "JC", book: "AÚN" },
+    { text: "El Logro no es un destino, sino la sinfonía que suena cuando todas tus pasiones tocan en armonía.", author: "JC", book: "AÚN" },
+    { text: "Tu historia no ha terminado. Aún.", author: "JC", book: "AÚN" },
+    { text: "No estás roto. Simplemente, tu reparación con oro no ha terminado.", author: "JC", book: "AÚN" },
+    { text: "El 'aún' nos devuelve al ritmo natural del crecimiento.", author: "JC", book: "AÚN" },
+    { text: "Tu potencial no tiene fecha de caducidad.", author: "JC", book: "AÚN" },
+    { text: "Lo que aún no sucede ya te está buscando.", author: "JC", book: "AÚN" },
+    { text: "A oscuras también se escuchan las verdades que no se ven.", author: "JC", book: "AÚN" },
+    { text: "Confundes el final de una carrera con el final de la carrera.", author: "JC", book: "AÚN" },
+    { text: "La verdadera riqueza de la vida se encuentra en las conexiones que formamos.", author: "JC", book: "AÚN" },
+    { text: "No son las cosas materiales las que nos llenan de felicidad, sino las personas con las que compartimos nuestro viaje.", author: "JC", book: "AÚN" },
+    { text: "El único riesgo que debería aterrarte es el de no hacer el trabajo para el que naciste.", author: "JC", book: "AÚN" },
+];
+
 export const mazoReto: Card[] = [
     { t: "Imita a alguien famoso (real o inventado). Si alguien lo adivina.", r: { happy: 2 }, i: "🎭", c: "bg-blue-100" },
     { t: "Haz reír a un jugador en 15 segundos. Si lo logras.", r: { happy: 1 }, i: "😂", c: "bg-blue-100" },
@@ -194,5 +253,3 @@ export const mainBoard: Tile[] = [
     { n: "Reto", t: "CARTA", c: "RETO", d: "Toma una carta de 'Oportunidad'", i: "⚡" },
     { n: "Feliz Cumpleaños", t: "BONUS", a: 1000, d: "Todos los jugadores te regalan $1,000.", i: "🎂" },
 ];
-
-export const innerRouteTiles = [35, 36, 37, 38, 39, 40, 51, 62, 73, 84, 83, 82];
